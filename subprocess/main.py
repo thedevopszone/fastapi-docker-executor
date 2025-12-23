@@ -15,3 +15,17 @@ def start_container():
         return {"container_id": result.stdout.strip()}
     except subprocess.CalledProcessError as e:
         raise HTTPException(status_code=500, detail=e.stderr)
+
+
+@app.post("/stop/{name}")
+def stop_container(name: str):
+    container = client.containers.get(name)
+    container.stop()
+    return {"status": "stopped"}
+
+
+@app.get("/logs/{name}")
+def logs(name: str):
+    container = client.containers.get(name)
+    return {"logs": container.logs().decode()}
+
